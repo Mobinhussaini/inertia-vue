@@ -12,9 +12,21 @@ import {
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { dashboard } from '@/routes';
+import permissions from '@/routes/permissions';
+import roles from '@/routes/roles';
+import tasks from '@/routes/tasks';
+import users from '@/routes/users';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import {
+    BookOpen,
+    Dock,
+    Folder,
+    KeyRound,
+    LayoutGrid,
+    LockKeyhole,
+    Users,
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
 const mainNavItems: NavItem[] = [
@@ -22,6 +34,26 @@ const mainNavItems: NavItem[] = [
         title: 'Dashboard',
         href: dashboard(),
         icon: LayoutGrid,
+    },
+    {
+        title: 'Users',
+        href: users.index(),
+        icon: Users,
+    },
+    {
+        title: 'Roles',
+        href: roles.index(),
+        icon: KeyRound,
+    },
+    {
+        title: 'Permissions',
+        href: permissions.index(),
+        icon: LockKeyhole,
+    },
+    {
+        title: 'Tasks',
+        href: tasks.index(),
+        icon: Dock,
     },
 ];
 
