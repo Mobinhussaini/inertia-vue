@@ -6,27 +6,27 @@ import Label from '@/components/ui/label/Label.vue';
 import Spinner from '@/components/ui/spinner/Spinner.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 
-import { update } from '@/actions/App/Http/Controllers/RoleController';
-import { edit, index } from '@/routes/roles';
-import { Role, type BreadcrumbItem } from '@/types';
+import { update } from '@/actions/App/Http/Controllers/TaskController';
+import { edit, index } from '@/routes/tasks';
+import { Task, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
 
-const { role } = defineProps<{ role: Role }>();
+const { task } = defineProps<{ task: Task }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Role',
+        title: 'Task',
         href: index().url,
     },
     {
-        title: 'Update Role',
-        href: edit(role?.id).url,
+        title: 'Update Task',
+        href: edit(task?.id).url,
     },
 ];
 </script>
 
 <template>
-    <Head :title="`Update Role ${role?.name}`" />
+    <Head :title="`Update Task ${task?.title}`" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
@@ -36,39 +36,39 @@ const breadcrumbs: BreadcrumbItem[] = [
                 class="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar"
             >
                 <Form
-                    v-bind="update.form(role)"
+                    v-bind="update.form(task)"
                     v-slot="{ errors, processing }"
                     class="mx-auto flex max-w-xl flex-col gap-6"
                 >
                     <div class="grid gap-6">
                         <div class="grid gap-2">
-                            <Label for="name">Name</Label>
+                            <Label for="title">title</Label>
                             <Input
-                                id="name"
+                                id="title"
                                 type="text"
-                                :default-value="role.name"
+                                :default-value="task.title"
                                 autofocus
                                 :tabindex="4"
                                 autocomplete
-                                name="name"
-                                placeholder="Full name"
+                                name="title"
+                                placeholder="Title"
                             />
-                            <InputError :message="errors.name" />
+                            <InputError :message="errors.title" />
                         </div>
 
                         <div class="grid gap-2">
-                            <Label for="guard_name">Select Guard</Label>
+                            <Label for="description">Description</Label>
                             <Input
-                                id="guard_name"
+                                id="description"
                                 type="text"
-                                :default-value="role.guard_name"
+                                :default-value="task.description"
                                 autofocus
                                 :tabindex="4"
                                 autocomplete
-                                name="guard_name"
-                                placeholder="Full guard name"
+                                name="description"
+                                placeholder="description"
                             />
-                            <InputError :message="errors.guard_name" />
+                            <InputError :message="errors.description" />
                         </div>
 
                         <Button
@@ -76,10 +76,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                             class="mt-2 w-full"
                             tabindex="5"
                             :disabled="processing"
-                            data-test="register-role-button"
+                            data-test="register-task-button"
                         >
                             <Spinner v-if="processing" />
-                            Update Role
+                            Update Task
                         </Button>
                     </div>
                 </Form>

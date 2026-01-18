@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\TaskStoreRequest;
+use App\Http\Requests\TaskUpdateRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TaskController extends Controller
 {
@@ -12,7 +15,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('tasks/Index', [
+            'tasks'=> Task::orderBy('created_at', 'desc')->get(),
+        ]);
     }
 
     /**
@@ -20,23 +25,16 @@ class TaskController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('tasks/Create');
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TaskStoreRequest $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Task $task)
-    {
-        //
+        Task::create($request->validated());
+        return to_route('tasks.index');
     }
 
     /**
@@ -44,15 +42,18 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+        return Inertia::render('tasks/Edit', [
+            'task'=> $task,
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Task $task)
+    public function update(TaskUpdateRequest $request, Task $task)
     {
-        //
+        $task->update($request->validated());
+        return to_route('tasks.index');
     }
 
     /**
@@ -60,6 +61,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return to_route('tasks.index');
     }
 }

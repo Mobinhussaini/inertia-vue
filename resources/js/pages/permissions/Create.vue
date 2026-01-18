@@ -6,27 +6,27 @@ import Label from '@/components/ui/label/Label.vue';
 import Spinner from '@/components/ui/spinner/Spinner.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 
-import { update } from '@/actions/App/Http/Controllers/RoleController';
-import { edit, index } from '@/routes/roles';
-import { Role, type BreadcrumbItem } from '@/types';
+import { store } from '@/actions/App/Http/Controllers/PermissionController';
+import { create, index } from '@/routes/permissions';
+import { Permission, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
-
-const { role } = defineProps<{ role: Role }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Role',
+        title: 'Permissions',
         href: index().url,
     },
     {
-        title: 'Update Role',
-        href: edit(role?.id).url,
+        title: 'Create Permission',
+        href: create().url,
     },
 ];
+
+const { permissions } = defineProps<{ permissions: Permission[] }>();
 </script>
 
 <template>
-    <Head :title="`Update Role ${role?.name}`" />
+    <Head title="Create Permission" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
@@ -36,7 +36,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 class="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar"
             >
                 <Form
-                    v-bind="update.form(role)"
+                    v-bind="store.form()"
                     v-slot="{ errors, processing }"
                     class="mx-auto flex max-w-xl flex-col gap-6"
                 >
@@ -46,27 +46,25 @@ const breadcrumbs: BreadcrumbItem[] = [
                             <Input
                                 id="name"
                                 type="text"
-                                :default-value="role.name"
                                 autofocus
-                                :tabindex="4"
+                                :tabindex="1"
                                 autocomplete
                                 name="name"
-                                placeholder="Full name"
+                                placeholder="Permission name"
                             />
                             <InputError :message="errors.name" />
                         </div>
 
                         <div class="grid gap-2">
-                            <Label for="guard_name">Select Guard</Label>
+                            <Label for="guard_name">Guard Name</Label>
                             <Input
                                 id="guard_name"
                                 type="text"
-                                :default-value="role.guard_name"
                                 autofocus
-                                :tabindex="4"
+                                :tabindex="2"
                                 autocomplete
                                 name="guard_name"
-                                placeholder="Full guard name"
+                                placeholder="Guard name"
                             />
                             <InputError :message="errors.guard_name" />
                         </div>
@@ -74,12 +72,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <Button
                             type="submit"
                             class="mt-2 w-full"
-                            tabindex="5"
+                            :tabindex="3"
                             :disabled="processing"
-                            data-test="register-role-button"
+                            data-test="create-permission-button"
                         >
                             <Spinner v-if="processing" />
-                            Update Role
+                            Create Permission
                         </Button>
                     </div>
                 </Form>
