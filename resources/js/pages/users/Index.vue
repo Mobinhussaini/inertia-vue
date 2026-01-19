@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Badge from '@/components/ui/badge/Badge.vue';
 import Table from '@/components/ui/table/Table.vue';
 import TableBody from '@/components/ui/table/TableBody.vue';
 import TableCaption from '@/components/ui/table/TableCaption.vue';
@@ -56,9 +57,15 @@ const { users } = defineProps<{ users: User[] }>();
                                 {{ user.name }}
                             </TableCell>
                             <TableCell>{{ user.email }}</TableCell>
-                            <TableCell>{{
-                                user.roles?.map((role) => role.name).join(', ')
-                            }}</TableCell>
+                            <TableCell>
+                                <div class="flex items-center gap-2">
+                                    <div v-for="role in user.roles" :key="role.id">
+                                        <Badge class="bg-blue-500 text-white">
+                                            {{ role.name }}
+                                        </Badge>
+                                    </div>
+                                </div>
+                            </TableCell>
                             <TableCell class="gap-x-6 text-right">
                                 <Link
                                     :href="edit(user.id)"

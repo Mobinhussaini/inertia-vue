@@ -8,10 +8,10 @@ import AppLayout from '@/layouts/AppLayout.vue';
 
 import { update } from '@/actions/App/Http/Controllers/RoleController';
 import { edit, index } from '@/routes/roles';
-import { Role, type BreadcrumbItem } from '@/types';
+import { Permission, Role, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
 
-const { role } = defineProps<{ role: Role }>();
+const { role, permissions } = defineProps<{ role: Role, permissions: Permission[] }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -57,7 +57,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                         </div>
 
                         <div class="grid gap-2">
-                            <Label for="guard_name">Select Guard</Label>
+                            <Label for="guard_name">Guard Name</Label>
                             <Input
                                 id="guard_name"
                                 type="text"
@@ -69,6 +69,28 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 placeholder="Full guard name"
                             />
                             <InputError :message="errors.guard_name" />
+                        </div>
+
+                         <div class="grid gap-2">
+                            <Label for="permissions">Permissions</Label>
+                            <div
+                                class="flex flex-row items-center gap-2"
+                                v-for="permission in permissions"
+                                :key="permission.id"
+                            >
+                                <Checkbox
+                                    :value="permission.name"
+                                    :id="permission.name"
+                                    :default-value="
+                                        user.permissions?.some(
+                                            (r) => r.name == permission.name,
+                                        )
+                                    "
+                                    name="permissions[]"
+                                />
+                                <Label :for="permission.name">{{ permission.name }}</Label>
+                            </div>
+                            <InputError :message="errors.permissions" />
                         </div>
 
                         <Button

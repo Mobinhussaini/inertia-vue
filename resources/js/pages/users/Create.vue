@@ -8,8 +8,9 @@ import AppLayout from '@/layouts/AppLayout.vue';
 
 import { store } from '@/actions/App/Http/Controllers/UserController';
 import { create, index } from '@/routes/users';
-import { User, type BreadcrumbItem } from '@/types';
+import { Role, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -22,7 +23,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const { users } = defineProps<{ users: User[] }>();
+const { roles } = defineProps<{ roles: Role[] }>();
 </script>
 
 <template>
@@ -68,6 +69,17 @@ const { users } = defineProps<{ users: User[] }>();
                                 placeholder="Email address"
                             />
                             <InputError :message="errors.email" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="roles">Roles</Label>
+
+                            <div class="flex items-center gap-2" v-for="role in roles" :key="role.id">
+                                <Checkbox :value="role.name" name="roles[]" />
+                                <Label :for="role.name">{{ role.name }}</Label>
+                            </div>
+
+                            <InputError :message="errors.roles" />
                         </div>
 
                         <div class="grid gap-2">

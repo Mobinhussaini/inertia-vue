@@ -1,19 +1,18 @@
 <script setup lang="ts">
-    import AppLayout from '@/layouts/AppLayout.vue';
-    import Button from '@/components/ui/button/Button.vue';
-    import Spinner from '@/components/ui/spinner/Spinner.vue';
-    import Input from '@/components/ui/input/Input.vue';
-    import Label from '@/components/ui/label/Label.vue';
-    import InputError from '@/components/InputError.vue';
+import InputError from '@/components/InputError.vue';
+import Button from '@/components/ui/button/Button.vue';
+import Input from '@/components/ui/input/Input.vue';
+import Label from '@/components/ui/label/Label.vue';
+import Spinner from '@/components/ui/spinner/Spinner.vue';
+import AppLayout from '@/layouts/AppLayout.vue';
 
-    import { edit, index } from '@/routes/users';
-    import { User, type BreadcrumbItem } from '@/types';
-    import { Form, Head } from '@inertiajs/vue3';
-    import { update } from '@/actions/App/Http/Controllers/UserController';
+import { update } from '@/actions/App/Http/Controllers/UserController';
+import Checkbox from '@/components/ui/checkbox/Checkbox.vue';
+import { edit, index } from '@/routes/users';
+import { Role, User, type BreadcrumbItem } from '@/types';
+import { Form, Head } from '@inertiajs/vue3';
 
-
-const { user } = defineProps<{ user: User }>();
-
+const { user, roles } = defineProps<{ user: User; roles: Role[] }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -25,7 +24,6 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: edit(user?.id).url,
     },
 ];
-
 </script>
 
 <template>
@@ -38,41 +36,109 @@ const breadcrumbs: BreadcrumbItem[] = [
             <div
                 class="relative min-h-screen flex-1 overflow-hidden rounded-xl border border-sidebar"
             >
+                <Form
+                    v-bind="update.form(user)"
+                    :reset-on-success="['password', 'password_confirmation']"
+                    v-slot="{ errors, processing }"
+                    class="mx-auto flex max-w-xl flex-col gap-6"
+                >
+                    <div class="grid gap-6">
+                        <div class="grid gap-2">
+                            <Label for="name">Name</Label>
+                            <Input
+                                id="name"
+                                type="text"
+                                :default-value="user.name"
+                                autofocus
+                                :tabindex="4"
+                                autocomplete
+                                name="name"
+                                placeholder="Full name"
+                            />
+                            <InputError :message="errors.name" />
+                        </div>
 
-            <Form v-bind="update.form(user)" :reset-on-success="['password', 'password_confirmation' ]" v-slot="{errors, processing }" class="max-w-xl mx-auto flex flex-col gap-6">
-                <div class="grid gap-6">
-                    <div class="grid gap-2">
-                        <Label for="name">Name</Label>
-                        <Input id="name" type="text" :default-value="user.name" autofocus :tabindex="4" autocomplete name="name" placeholder="Full name" />
-                        <InputError :message="errors.name" />
+                        <div class="grid gap-2">
+                            <Label for="email">Email</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                autofocus
+                                :tabindex="4"
+                                :default-value="user.email"
+                                autocomplete
+                                name="email"
+                                placeholder="Email address"
+                            />
+                            <InputError :message="errors.email" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="roles">Roles</Label>
+                            <div
+                                class="flex flex-row items-center gap-2"
+                                v-for="role in roles"
+                                :key="role.id"
+                            >
+                                <Checkbox
+                                    :value="role.name"
+                                    :id="role.name"
+                                    :default-value="
+                                        user.roles?.some(
+                                            (r) => r.name == role.name,
+                                        )
+                                    "
+                                    name="roles[]"
+                                />
+                                <Label :for="role.name">{{ role.name }}</Label>
+                            </div>
+                            <InputError :message="errors.roles" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="password">Password</Label>
+                            <Input
+                                id="password"
+                                type="password"
+                                autofocus
+                                :tabindex="4"
+                                autocomplete
+                                name="password"
+                                placeholder="Password address"
+                            />
+                            <InputError :message="errors.password" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="password_confirmation"
+                                >Confirm Password</Label
+                            >
+                            <Input
+                                id="password_confirmation"
+                                type="password"
+                                autofocus
+                                :tabindex="4"
+                                autocomplete
+                                name="password_confirmation"
+                                placeholder="Cofirm Password"
+                            />
+                            <InputError
+                                :message="errors.password_confirmation"
+                            />
+                        </div>
+
+                        <Button
+                            type="submit"
+                            class="mt-2 w-full"
+                            tabindex="5"
+                            :disabled="processing"
+                            data-test="register-user-button"
+                        >
+                            <Spinner v-if="processing" />
+                            Update Account
+                        </Button>
                     </div>
-
-                    <div class="grid gap-2">
-                        <Label for="email">Email</Label>
-                        <Input id="email" type="email" autofocus :tabindex="4" :default-value="user.email" autocomplete name="email" placeholder="Email address" />
-                        <InputError :message="errors.email" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="password">Password</Label>
-                        <Input id="password" type="password" autofocus :tabindex="4" autocomplete name="password" placeholder="Password address" />
-                        <InputError :message="errors.password" />
-                    </div>
-
-                    <div class="grid gap-2">
-                        <Label for="password_confirmation">Confirm Password</Label>
-                        <Input id="password_confirmation" type="password" autofocus :tabindex="4" autocomplete name="password_confirmation" placeholder="Cofirm Password" />
-                        <InputError :message="errors.password_confirmation" />
-                    </div>
-
-                    <Button type="submit" class="mt-2 w-full" tabindex="5" :disabled="processing" data-test="register-user-button">
-                        <Spinner v-if="processing"/>
-                        Update Account
-                    </Button>
-
-                </div>
-            </Form>
-
+                </Form>
             </div>
         </div>
     </AppLayout>

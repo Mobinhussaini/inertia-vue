@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Http\Resources\RoleResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -16,8 +18,7 @@ class UserController extends Controller
     public function index()
     {
         return Inertia::render('users/Index', [
-            // 'users'=> User::with('roles')->paginate(12),
-            'users'=> User::all(),
+            'users'=> UserResource::collection(User::with('roles')->get()),
         ]);
     }
 
@@ -26,7 +27,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return Inertia::render('users/Create');
+        return Inertia::render('users/Create', [
+            'roles'=> RoleResource::collection(Role::all()),
+        ]);
     }
 
     /**
@@ -34,7 +37,9 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-            User::create($request->validated());
+            $user = User::create($request->validated());
+
+            $user->assignRole($request->roles);
             return to_route('users.index');
     }
 
@@ -44,7 +49,8 @@ class UserController extends Controller
     public function edit(User $user)
     {
         return Inertia::render('users/Edit', [
-            'user'=> $user,
+            'user'=> new UserResource($user->load('roles')),
+            'roles'=> RoleResource::collection(Role::all()),
         ]);
     }
 
@@ -53,11 +59,16 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        $user->update([
-            'name'=> $request->name,
-            'email'=> $request->email,
-            'password'=> $request->password ? $request->password: $user->password,
-        ]);
+        $validated = $request->validated();
+
+        if(!$request->filled('password')){
+            unset($validated['password']);
+        }
+
+        $user->update($validated);
+
+        $user->syncRoles($request->roles);
+
         return to_route('users.index');
     }
 
