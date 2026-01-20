@@ -7,11 +7,15 @@ import Spinner from '@/components/ui/spinner/Spinner.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 import { update } from '@/actions/App/Http/Controllers/RoleController';
+import { Checkbox } from '@/components/ui/checkbox';
 import { edit, index } from '@/routes/roles';
 import { Permission, Role, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
 
-const { role, permissions } = defineProps<{ role: Role, permissions: Permission[] }>();
+const { role, permissions } = defineProps<{
+    role: Role;
+    permissions: Permission[];
+}>();
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -66,12 +70,12 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 :tabindex="4"
                                 autocomplete
                                 name="guard_name"
-                                placeholder="Full guard name"
+                                placeholder="guard name"
                             />
                             <InputError :message="errors.guard_name" />
                         </div>
 
-                         <div class="grid gap-2">
+                        <div class="grid gap-2">
                             <Label for="permissions">Permissions</Label>
                             <div
                                 class="flex flex-row items-center gap-2"
@@ -79,16 +83,19 @@ const breadcrumbs: BreadcrumbItem[] = [
                                 :key="permission.id"
                             >
                                 <Checkbox
-                                    :value="permission.name"
                                     :id="permission.name"
+                                    :value="permission.name"
                                     :default-value="
-                                        user.permissions?.some(
-                                            (r) => r.name == permission.name,
+                                        role.permissions?.some(
+                                            (r) => r.name === permission.name,
                                         )
                                     "
                                     name="permissions[]"
                                 />
-                                <Label :for="permission.name">{{ permission.name }}</Label>
+                                <Label
+                                    :for="permission.name"
+                                    >{{ permission.name }}</Label
+                                >
                             </div>
                             <InputError :message="errors.permissions" />
                         </div>

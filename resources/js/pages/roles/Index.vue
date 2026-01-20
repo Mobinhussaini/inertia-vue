@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Badge } from '@/components/ui/badge';
 import Table from '@/components/ui/table/Table.vue';
 import TableBody from '@/components/ui/table/TableBody.vue';
 import TableCaption from '@/components/ui/table/TableCaption.vue';
@@ -7,10 +8,9 @@ import TableHead from '@/components/ui/table/TableHead.vue';
 import TableHeader from '@/components/ui/table/TableHeader.vue';
 import TableRow from '@/components/ui/table/TableRow.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { index } from '@/routes/roles';
+import { create, destroy, edit, index } from '@/routes/roles';
 import type { BreadcrumbItem, Role } from '@/types';
 import { Head, Link } from '@inertiajs/vue3';
-import { create, edit, destroy } from '@/routes/roles';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -47,15 +47,26 @@ const { roles } = defineProps<{ roles: Role[] }>();
                         <TableRow>
                             <TableHead class="w-25">Name</TableHead>
                             <TableHead>Guard name</TableHead>
+                            <TableHead>Permissions</TableHead>
                             <TableHead class="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
-                    <TableBody v-if="roles.length > 0 ">
+                    <TableBody v-if="roles.length > 0">
                         <TableRow v-for="role in roles" :key="role.id">
                             <TableCell class="font-medium">
                                 {{ role.name }}
                             </TableCell>
                             <TableCell>{{ role.guard_name }}</TableCell>
+                            <TableCell>
+                                <span
+                                    v-for="permission in role.permissions"
+                                    :key="permission.id"
+                                >
+                                    <Badge class="bg-green-500 text-white">{{
+                                        permission.name
+                                    }}</Badge>
+                                </span>
+                            </TableCell>
                             <TableCell class="gap-x-6 text-right">
                                 <Link
                                     :href="edit(role.id)"

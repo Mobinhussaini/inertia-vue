@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\RoleStoreRequest;
 use App\Http\Requests\RoleUpdateRequest;
-use Illuminate\Http\Request;
+use App\Http\Resources\PermissionResource;
+use App\Http\Resources\RoleResource;
 use Inertia\Inertia;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
@@ -16,7 +18,7 @@ class RoleController extends Controller
     public function index()
     {
         return Inertia::render('roles/Index', [
-            'roles'=> Role::all(),
+            'roles' => RoleResource::collection(Role::with('permissions')->get()),
         ]);
     }
 
@@ -25,7 +27,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return Inertia::render('roles/Create');
+        return Inertia::render('roles/Create', [
+            'permissions' => PermissionResource::collection(Permission::all()),
+        ]);
     }
 
     /**
@@ -33,7 +37,9 @@ class RoleController extends Controller
      */
     public function store(RoleStoreRequest $request)
     {
-        Role::create($request->validated());
+        $role = Role::create($request->validated());
+
+        $role->syncPermissions($request->permissions);
 
         return to_route('roles.index');
     }
@@ -44,7 +50,8 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         return Inertia::render('roles/Edit', [
-            'role'=> $role,
+            'role' => new RoleResource($role->load('permissions')),
+            'permissions' => PermissionResource::collection(Permission::all()),
         ]);
     }
 
@@ -54,6 +61,9 @@ class RoleController extends Controller
     public function update(RoleUpdateRequest $request, Role $role)
     {
         $role->update($request->validated());
+
+        $role->syncPermissions($request->permissions);
+
         return to_route('roles.index');
     }
 

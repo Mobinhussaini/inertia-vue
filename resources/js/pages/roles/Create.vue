@@ -7,8 +7,9 @@ import Spinner from '@/components/ui/spinner/Spinner.vue';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 import { store } from '@/actions/App/Http/Controllers/RoleController';
+import { Checkbox } from '@/components/ui/checkbox';
 import { create, index } from '@/routes/roles';
-import { Role, type BreadcrumbItem } from '@/types';
+import { Permission, type BreadcrumbItem } from '@/types';
 import { Form, Head } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -22,7 +23,8 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-const { roles } = defineProps<{ roles: Role[] }>();
+const { permissions } = defineProps<{ permissions: Permission[] }>();
+
 </script>
 
 <template>
@@ -67,6 +69,21 @@ const { roles } = defineProps<{ roles: Role[] }>();
                                 placeholder="Guard name"
                             />
                             <InputError :message="errors.guard_name" />
+                        </div>
+
+                        <div class="grid gap-2">
+                            <Label for="permissions">Permissions</Label>
+
+                            <div
+                                class="flex items-center gap-2"
+                                v-for="permission in permissions"
+                                :key="permission.id"
+                            >
+                                <Checkbox :value="permission.name" :tabindex="3" name="permissions[]" />
+                                <Label :for="permission.name" >{{ permission.name }}</Label>
+                            </div>
+
+                            <InputError :message="errors.permissions" />
                         </div>
 
                         <Button

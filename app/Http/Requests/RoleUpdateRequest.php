@@ -25,7 +25,7 @@ class RoleUpdateRequest extends FormRequest
             'name'=> 'required|string|max:255|unique:roles,name,'. $this->route('role')->id,
             'guard_name'=> 'required|string|max:255',
             'permissions'=> 'nullable|array',
-            'permissions.*'=> 'exists:permissions,id',
+            'permissions.*'=> 'exists:permissions,name',
         ];
     }
 }

@@ -25,7 +25,7 @@ class RoleStoreRequest extends FormRequest
             'name'=> 'required|string|max:255|unique:roles,name',
             'guard_name'=> 'required|string|max:255',
             'permissions'=> 'nullable|array',
-            'permissions.*'=> 'exists:permissions,id',
+            'permissions.*'=> 'exists:permissions,name',
         ];
     }
 }
